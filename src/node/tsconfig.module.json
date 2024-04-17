@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "target": "esnext",
+    "outDir": "build/module",
+    "tsBuildInfoFile": "build/tsconfig.module.tsbuildinfo",
+    "module": "esnext"
+  },
+  "exclude": [
+    "node_modules/**",
+    "src/**/*.spec.ts"
+  ]
+}
