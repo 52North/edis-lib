@@ -15,8 +15,21 @@ export interface TimeValuePair {
 export class Station {
   constructor(
     readonly id: string,
-    readonly name: string,
-    private timeseries: TimeSeries[]
+    readonly shortname: string,
+    readonly longname: string,
+    readonly km: number,
+    readonly agency: string,
+    readonly country: string,
+    readonly water: {
+      shortname: string;
+      longname: string;
+    },
+    private timeseries: TimeSeries[],
+    readonly longitude?: number,
+    readonly latitude?: number,
+    readonly land?: string,
+    readonly kreis?: string,
+    readonly einzugsgebiet?: string
   ) {}
 
   getTimeSeries() {

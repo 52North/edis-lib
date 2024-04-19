@@ -63,7 +63,21 @@ export abstract class EdisBase {
       map((res) =>
         res.data.stations.map((entry) => {
           const timeseries: TimeSeries[] = [];
-          const station = new Station(entry.uuid, entry.longname, timeseries);
+          const station = new Station(
+            entry.uuid,
+            entry.shortname,
+            entry.longname,
+            entry.km,
+            entry.agency,
+            entry.country,
+            entry.water,
+            timeseries,
+            entry.longitude,
+            entry.latitude,
+            entry.land,
+            entry.kreis,
+            entry.einzugsgebiet
+          );
           entry.timeseries.forEach((ts) =>
             timeseries.push(
               new TimeSeries(
