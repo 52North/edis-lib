@@ -17,3 +17,17 @@ export interface PegelonlineTimeseries extends PegelonlineEntity {
   equidistance: number;
   characteristicValues: PegelonlineCharacteristicValues[];
 }
+
+export interface PegelonlineStation extends PegelonlineEntity {
+  uuid: string;
+  number: string;
+  km: number;
+  agency: string;
+  longitude?: number;
+  latitude?: number;
+  water: {
+    shortname: string;
+    longname: string;
+  };
+  timeseries: PegelonlineTimeseries[];
+}

@@ -4,6 +4,7 @@ import { from, map, Observable } from 'rxjs';
 
 import { DICT_URL, PEGELONLINE_URL } from './consts';
 import { DictStation, DictStationQuery } from './models/dict';
+import { PegelonlineStation } from './models/pegelonline';
 import { MqttEdisClient } from './mqttEdisClient';
 import { Station, TimeSeries } from './station';
 
@@ -69,11 +70,11 @@ export abstract class EdisBase {
             entry.longname,
             entry.km,
             entry.agency,
-            entry.country,
             entry.water,
             timeseries,
             entry.longitude,
             entry.latitude,
+            entry.country,
             entry.land,
             entry.kreis,
             entry.einzugsgebiet
@@ -93,6 +94,41 @@ export abstract class EdisBase {
           return station;
         })
       )
+    );
+  }
+
+  getStation(id: string): Observable<Station> {
+    const url = `${this.config.pegelonlineUrl}/stations/${id}?includeTimeseries=true`;
+    const request = axios.get<PegelonlineStation>(url);
+    return from(request).pipe(
+      map((res) => {
+        const timeseries: TimeSeries[] = [];
+        const st = res.data;
+        const station = new Station(
+          st.uuid,
+          st.shortname,
+          st.longname,
+          st.km,
+          st.agency,
+          st.water,
+          timeseries,
+          st.longitude,
+          st.latitude
+        );
+        st.timeseries.forEach((ts) => {
+          timeseries.push(
+            new TimeSeries(
+              ts.longname,
+              ts.shortname,
+              ts.unit,
+              station,
+              this.config.pegelonlineUrl,
+              this.client
+            )
+          );
+        });
+        return station;
+      })
     );
   }
 

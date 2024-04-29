@@ -19,7 +19,6 @@ export class Station {
     readonly longname: string,
     readonly km: number,
     readonly agency: string,
-    readonly country: string,
     readonly water: {
       shortname: string;
       longname: string;
@@ -27,6 +26,7 @@ export class Station {
     private timeseries: TimeSeries[],
     readonly longitude?: number,
     readonly latitude?: number,
+    readonly country?: string,
     readonly land?: string,
     readonly kreis?: string,
     readonly einzugsgebiet?: string
