@@ -64,8 +64,10 @@ export class TimeSeries {
   }
 
   getCurrentTimeSeriesData(): Observable<TimeSeriesData> {
-    const topicId = `${this.station.id}/${this.shortname.toLowerCase()}`;
-    return this.client.subscribeTopic(topicId);
+    return this.client.subscribeTopic(
+      this.station.id,
+      this.shortname.toLocaleLowerCase()
+    );
   }
 
   getCharacteristicValues(): Observable<PegelonlineCharacteristicValues[]> {

@@ -42,8 +42,11 @@ export class MqttEdisClient {
     });
   }
 
-  subscribeTopic(topicId: string): Observable<TimeSeriesData> {
-    const topic = `edis/pegelonline/*/*/*/*/${topicId}`;
+  subscribeTopic(
+    stationId: string,
+    phenomenon: string
+  ): Observable<TimeSeriesData> {
+    const topic = `edis/pegelonline/*/*/*/*/${stationId}/${phenomenon}`;
     return new Observable<TimeSeriesData>((subscriber) => {
       this.client.subscribe(topic, () => {
         console.log(
@@ -51,11 +54,16 @@ export class MqttEdisClient {
         );
       });
       const msgSubscription = this.messageSubject.subscribe((msg) => {
-        if (msg.topic.indexOf(topicId) !== -1) {
-          subscriber.next({
-            timestamp: msg.timestamp,
-            value: msg.value,
-          });
+        const topicFragments = msg.topic.split('/');
+        if (topicFragments.length >= 0) {
+          const phen = topicFragments[topicFragments.length - 1];
+          const station = topicFragments[topicFragments.length - 2];
+          if (stationId === station && phenomenon === phen) {
+            subscriber.next({
+              timestamp: msg.timestamp,
+              value: msg.value,
+            });
+          }
         }
       });
       return () => {
