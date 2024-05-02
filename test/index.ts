@@ -28,52 +28,21 @@ const edis = new Edis({
   mqttCredentials: credentials,
 });
 
-edis
-  .getStations({ q: '593647aa-9fea-43ec-a7d6-6476a76ae868' })
-  .subscribe((stations) => {
-    // console.log(stations);
-    if (stations.length > 0) {
-      fetchCurrentDataFor(stations[0].getTimeSeries()[0], stations[0]);
-      stations[0].getTimeSeries().forEach((ts) => {
-        // console.log(ts);
-        // ts.getTimeSeriesData('PT1H').subscribe((data) => {
-        //   if (data.length) {
-        //     console.log(
-        //       `Data length: ${data.length} ### with start: ${
-        //         data[0].timestamp
-        //       } - end: ${data[data.length - 1].timestamp}`
-        //     );
-        //   } else {
-        //     console.log(`No Data...`);
-        //   }
-        // });
-        ts.getCharacteristicValues().subscribe((values) => {
-          console.log(values);
-        });
-      });
-      // ts.getCurrentTimeSeriesData().subscribe({
-      //   next: (data) => {
-      //     console.log(`${ts.name} get ${JSON.stringify(data)}`);
-      //   },
-      //   error: (err) => console.error(err),
-      //   complete: () => console.log('Complete'),
-      // });
-      // });
-    }
+edis.getStation('593647aa-9fea-43ec-a7d6-6476a76ae868').subscribe((station) => {
+  console.log(station);
+  station.getTimeSeries().forEach((ts) => {
+    console.log(ts);
   });
+});
 
-edis
-  .getStations({ q: 'c0ec139b-13b4-4f86-bee3-06665ad81a40' })
-  .subscribe((stations) => {
-    if (stations.length > 0) {
-      const subscription = fetchCurrentDataFor(
-        stations[0].getTimeSeries()[0],
-        stations[0]
-      );
-
-      //       // setTimeout(() => {
-      //       //   subscription.unsubscribe();
-      //       //   console.log(`${new Date().toISOString()} - unsubscribe`);
-      //       // }, 300000);
-    }
-  });
+edis.getStations({ q: 'helgoland binnen' }).subscribe((stations) => {
+  stations.forEach((station) => console.log(station.longname));
+  const station = stations[0];
+  if (station) {
+    station.getTimeSeries().forEach((ts) => {
+      console.log(ts);
+      fetchCurrentDataFor(ts, station);
+      ts.getCharacteristicValues().subscribe((values) => console.log(values));
+    });
+  }
+});

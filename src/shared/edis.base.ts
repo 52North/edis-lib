@@ -6,7 +6,7 @@ import { DICT_URL, PEGELONLINE_URL } from './consts';
 import { DictStation, DictStationQuery } from './models/dict';
 import { PegelonlineStation } from './models/pegelonline';
 import { MqttEdisClient } from './mqttEdisClient';
-import { Station, TimeSeries } from './station';
+import { Station, StationConfig, TimeSeries } from './station';
 
 export interface EdisProperties {
   /**
@@ -63,36 +63,36 @@ export abstract class EdisBase {
     return from(request).pipe(
       map((res) =>
         res.data.stations.map((entry) => {
-          const timeseries: TimeSeries[] = [];
-          const station = new Station(
-            entry.uuid,
-            entry.shortname,
-            entry.longname,
-            entry.km,
-            entry.agency,
-            entry.water,
+          const stationConf: StationConfig = {
+            id: entry.uuid,
+            shortname: entry.shortname,
+            longname: entry.longname,
+            km: entry.km,
+            agency: entry.agency,
+            water: entry.water,
+            longitude: entry.longitude,
+            latitude: entry.latitude,
+            country: entry.country,
+            land: entry.land,
+            kreis: entry.kreis,
+            einzugsgebiet: entry.einzugsgebiet,
+          };
+          const timeseries = entry.timeseries.map(
+            (ts) =>
+              new TimeSeries({
+                name: ts.longname,
+                shortname: ts.shortname,
+                unit: ts.unit,
+                equidistance: ts.equidistance,
+                station: new Station(stationConf),
+                client: this.client,
+                pegelonlineUrl: this.config.pegelonlineUrl,
+              })
+          );
+          return new Station({
+            ...stationConf,
             timeseries,
-            entry.longitude,
-            entry.latitude,
-            entry.country,
-            entry.land,
-            entry.kreis,
-            entry.einzugsgebiet
-          );
-          entry.timeseries.forEach((ts) =>
-            timeseries.push(
-              new TimeSeries(
-                ts.longname,
-                ts.shortname,
-                ts.unit,
-                ts.equidistance,
-                station,
-                this.config.pegelonlineUrl,
-                this.client
-              )
-            )
-          );
-          return station;
+          });
         })
       )
     );
@@ -103,33 +103,30 @@ export abstract class EdisBase {
     const request = axios.get<PegelonlineStation>(url);
     return from(request).pipe(
       map((res) => {
-        const timeseries: TimeSeries[] = [];
         const st = res.data;
-        const station = new Station(
-          st.uuid,
-          st.shortname,
-          st.longname,
-          st.km,
-          st.agency,
-          st.water,
-          timeseries,
-          st.longitude,
-          st.latitude
+        const stationConf: StationConfig = {
+          id: st.uuid,
+          shortname: st.shortname,
+          longname: st.longname,
+          km: st.km,
+          agency: st.agency,
+          water: st.water,
+          longitude: st.longitude,
+          latitude: st.latitude,
+        };
+        const timeseries = st.timeseries.map(
+          (ts) =>
+            new TimeSeries({
+              name: ts.longname,
+              shortname: ts.shortname,
+              unit: ts.unit,
+              equidistance: ts.equidistance,
+              station: new Station(stationConf),
+              client: this.client,
+              pegelonlineUrl: this.config.pegelonlineUrl,
+            })
         );
-        st.timeseries.forEach((ts) => {
-          timeseries.push(
-            new TimeSeries(
-              ts.longname,
-              ts.shortname,
-              ts.unit,
-              ts.equidistance,
-              station,
-              this.config.pegelonlineUrl,
-              this.client
-            )
-          );
-        });
-        return station;
+        return new Station({ ...stationConf, timeseries });
       })
     );
   }
