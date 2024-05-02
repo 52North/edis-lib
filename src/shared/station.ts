@@ -42,9 +42,10 @@ export class TimeSeries {
     readonly name: string,
     readonly shortname: string,
     readonly unit: string,
-    private readonly station: Station,
+    readonly equidistance: number,
+    readonly station: Station,
     private readonly pegelonlineUrl: string,
-    private client: MqttEdisClient
+    private readonly client: MqttEdisClient
   ) {}
 
   getTimeSeriesData(timespan: Timespan): Observable<TimeSeriesData[]> {

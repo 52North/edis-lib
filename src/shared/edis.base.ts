@@ -85,6 +85,7 @@ export abstract class EdisBase {
                 ts.longname,
                 ts.shortname,
                 ts.unit,
+                ts.equidistance,
                 station,
                 this.config.pegelonlineUrl,
                 this.client
@@ -121,6 +122,7 @@ export abstract class EdisBase {
               ts.longname,
               ts.shortname,
               ts.unit,
+              ts.equidistance,
               station,
               this.config.pegelonlineUrl,
               this.client
