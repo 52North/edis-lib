@@ -17,7 +17,7 @@ export class MqttEdisClient {
     });
 
     this.client.on('connect', () => {
-      console.log('client connected');
+      console.log(`client connected to ${options.hostname}`);
     });
 
     this.client.on('message', (topic, message, packet) => {

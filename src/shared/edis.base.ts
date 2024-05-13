@@ -21,13 +21,17 @@ export interface EdisProperties {
    * optional credentials for the mqtt client connection
    */
   mqttCredentials?: MqttCredentials;
+  /**
+   * mqtt host url
+   */
+  mqttHost?: string;
 }
 
 export interface MqttCredentials {
   /**
    * username for the mqtt client connection
    */
-  username: string;
+  username?: string;
   /**
    * password for the mqtt client connection
    */
@@ -48,6 +52,9 @@ export abstract class EdisBase {
         : PEGELONLINE_URL,
       mqttCredentials: props.mqttCredentials,
     };
+    if (props.mqttHost) {
+      mqttClientOptions.hostname = props.mqttHost;
+    }
     this.client = new MqttEdisClient(mqttClientOptions);
   }
 
