@@ -46,16 +46,20 @@ export abstract class EdisBase {
     protected mqttClientOptions: IClientOptions
   ) {
     this.config = {
-      dictApiUrl: props.dictApiUrl ? props.dictApiUrl : DICT_URL,
-      pegelonlineUrl: props.pegelonlineUrl
-        ? props.pegelonlineUrl
+      dictApiUrl: this.props.dictApiUrl ? this.props.dictApiUrl : DICT_URL,
+      pegelonlineUrl: this.props.pegelonlineUrl
+        ? this.props.pegelonlineUrl
         : PEGELONLINE_URL,
-      mqttCredentials: props.mqttCredentials,
+      mqttCredentials: this.props.mqttCredentials,
     };
-    if (props.mqttHost) {
-      mqttClientOptions.hostname = props.mqttHost;
+    if (this.props.mqttHost) {
+      mqttClientOptions.hostname = this.props.mqttHost;
     }
     this.client = new MqttEdisClient(mqttClientOptions);
+  }
+
+  setAccessToken(accessToken: string) {
+    this.client.setAccessToken(accessToken);
   }
 
   /**

@@ -42,6 +42,10 @@ export class MqttEdisClient {
     });
   }
 
+  setAccessToken(accessToken: string) {
+    this.client.options.password = accessToken;
+  }
+
   subscribeTopic(
     stationId: string,
     phenomenon: string
