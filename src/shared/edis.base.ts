@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { IClientOptions } from 'mqtt';
-import { from, map, Observable } from 'rxjs';
+import { catchError, from, map, Observable } from 'rxjs';
 
 import { DICT_URL, PEGELONLINE_URL } from './consts';
 import { DictStation, DictStationQuery } from './models/dict';
@@ -138,6 +138,10 @@ export abstract class EdisBase {
             })
         );
         return new Station({ ...stationConf, timeseries });
+      }),
+      catchError((err) => {
+        console.error(err);
+        throw err;
       })
     );
   }

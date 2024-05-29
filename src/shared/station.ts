@@ -100,11 +100,6 @@ export class TimeSeries {
     this.station = config.station;
   }
 
-  setClient(client: MqttEdisClient) {
-    this.#client = client;
-    return this;
-  }
-
   getTimeSeriesData(timespan: Timespan): Observable<TimeSeriesData[]> {
     const serviceUrl = this.#pegelonlineUrl;
     const timeParams = this.createTimeparam(timespan);
