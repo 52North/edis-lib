@@ -33,7 +33,7 @@
   },
   "engines": {
     "node": ">= 16",
-    "pnpm": "^8"
+    "pnpm": "^9"
   },
   "devDependencies": {
     "@bitauth/libauth": "^1.17.1",
