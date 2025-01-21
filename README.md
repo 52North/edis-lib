@@ -4,11 +4,11 @@ Library to consume the DICT-API and the [Pegelonline REST-API](https://www.pegel
 
 ## Build libs
 
-To get a packaged build of the edis lib use `pnpm build`. After that you got an npm package in both folders `browser` and `node`.
+To get a packaged build of the edis lib use `pnpm build`.
 
-## Getting started with the lib
+## [Getting started with the lib](./HowTo.md)
 
-``` typescript
+<!-- ``` typescript
 const edis = new Edis({
     dictApiUrl: 'http://localhost:3000', // optional, example is for local development
     mqttCredentials: {
@@ -38,4 +38,4 @@ edis.getStations().subscribe({
         }
     },
 });
-```
+``` -->
