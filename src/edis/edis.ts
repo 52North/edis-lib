@@ -1,14 +1,20 @@
-import axios from 'axios';
 import { IClientOptions } from 'mqtt';
-import { catchError, from, map, Observable } from 'rxjs';
-
-import { DICT_URL, PEGELONLINE_URL } from './consts';
 import { DictStation, DictStationQuery } from './models/dict';
-import { PegelonlineStation } from './models/pegelonline';
+import axios from 'axios';
+
+import {
+  DEFAULT_DICT_URL,
+  DEFAULT_PEGELONLINE_URL,
+  MQTT_BASE_CONFIG,
+  WEBSOCKET_BASE_CONFIG,
+} from './constants';
 import { MqttEdisClient } from './mqttEdisClient';
 import { Station, StationConfig, TimeSeries } from './station';
+import { catchError, from, map, Observable } from 'rxjs';
+import { PegelonlineStation } from './models/pegelonline';
 
 export interface EdisProperties {
+  usedInBrowser: boolean;
   /**
    * optional url to the dict api endpoint
    */
@@ -38,28 +44,37 @@ export interface MqttCredentials {
   password: string;
 }
 
-export abstract class EdisBase {
-  private client: MqttEdisClient;
-  private config: EdisProperties;
-  constructor(
-    private props: EdisProperties,
-    protected mqttClientOptions: IClientOptions
-  ) {
-    this.config = {
-      dictApiUrl: this.props.dictApiUrl ? this.props.dictApiUrl : DICT_URL,
-      pegelonlineUrl: this.props.pegelonlineUrl
-        ? this.props.pegelonlineUrl
-        : PEGELONLINE_URL,
-      mqttCredentials: this.props.mqttCredentials,
-    };
-    if (this.props.mqttHost) {
-      mqttClientOptions.hostname = this.props.mqttHost;
-    }
-    this.client = new MqttEdisClient(mqttClientOptions);
-  }
+export type StationQuery = DictStationQuery;
 
-  setAccessToken(accessToken: string) {
-    this.client.setAccessToken(accessToken);
+/**
+ * Entry point to use this library. An instance of this class initializes a mqtt client to subscribe to current timeseries data.
+ */
+export class Edis {
+  private client: MqttEdisClient;
+  private pegelonlineUrl: string;
+  private dictApiUrl: string;
+
+  constructor(protected properties: EdisProperties = { usedInBrowser: true }) {
+    let config: IClientOptions;
+    if (properties.usedInBrowser) {
+      config = WEBSOCKET_BASE_CONFIG;
+    } else {
+      config = MQTT_BASE_CONFIG;
+    }
+    if (properties.mqttCredentials) {
+      config.username = properties.mqttCredentials.username;
+      config.password = properties.mqttCredentials.password;
+    }
+    if (properties.mqttHost) {
+      config.hostname = properties.mqttHost;
+    }
+    this.client = new MqttEdisClient(config);
+    this.pegelonlineUrl = properties.pegelonlineUrl
+      ? properties.pegelonlineUrl
+      : DEFAULT_PEGELONLINE_URL;
+    this.dictApiUrl = properties.dictApiUrl
+      ? properties.dictApiUrl
+      : DEFAULT_DICT_URL;
   }
 
   /**
@@ -67,7 +82,7 @@ export abstract class EdisBase {
    *
    * @returns Observable of Stations in an array.
    */
-  getStations(query: DictStationQuery = {}): Observable<Station[]> {
+  getStations(query: StationQuery = {}): Observable<Station[]> {
     const request = axios.get<{ stations: DictStation[] }>(
       this.createDictApiSearchUrl(query)
     );
@@ -97,7 +112,7 @@ export abstract class EdisBase {
                 equidistance: ts.equidistance,
                 station: new Station(stationConf),
                 client: this.client,
-                pegelonlineUrl: this.config.pegelonlineUrl,
+                pegelonlineUrl: this.pegelonlineUrl,
               })
           );
           return new Station({
@@ -110,7 +125,7 @@ export abstract class EdisBase {
   }
 
   getStation(id: string): Observable<Station> {
-    const url = `${this.config.pegelonlineUrl}/stations/${id}?includeTimeseries=true`;
+    const url = `${this.pegelonlineUrl}/stations/${id}?includeTimeseries=true`;
     const request = axios.get<PegelonlineStation>(url);
     return from(request).pipe(
       map((res) => {
@@ -134,7 +149,7 @@ export abstract class EdisBase {
               equidistance: ts.equidistance,
               station: new Station(stationConf),
               client: this.client,
-              pegelonlineUrl: this.config.pegelonlineUrl,
+              pegelonlineUrl: this.pegelonlineUrl,
             })
         );
         return new Station({ ...stationConf, timeseries });
@@ -147,7 +162,7 @@ export abstract class EdisBase {
   }
 
   private createDictApiSearchUrl(query: DictStationQuery) {
-    return `${this.config.dictApiUrl}/search?${new URLSearchParams(
+    return `${this.dictApiUrl}/search?${new URLSearchParams(
       Object.entries(query)
     )}`;
   }

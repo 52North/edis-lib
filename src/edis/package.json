@@ -1,10 +1,10 @@
 {
-  "name": "edis-lib",
+  "name": "edis",
   "version": "1.0.0",
-  "description": "Library for pegelonline API",
-  "main": "build/main/node/index.js",
-  "typings": "build/main/node/index.d.ts",
-  "module": "build/module/node/index.js",
+  "description": "Library for an easy use of Dict-API and Rest-API of pegelonline",
+  "main": "build/main/index.js",
+  "typings": "build/main/index.d.ts",
+  "module": "build/module/index.js",
   "scripts": {
     "build": "run-p build:* && pnpm pack",
     "build:main": "tsc -p tsconfig.json",

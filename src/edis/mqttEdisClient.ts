@@ -8,7 +8,7 @@ export class MqttEdisClient {
   private messageSubject = new Subject<MqttTimeseriesDataMessage>();
   private client: mqtt.MqttClient;
 
-  constructor(private options: mqtt.IClientOptions) {
+  constructor(options: mqtt.IClientOptions) {
     this.client = mqtt.connect(options);
     this.client.on('error', (error) => {
       // this.client.end();
@@ -16,9 +16,9 @@ export class MqttEdisClient {
       console.error(error);
     });
 
-    this.client.on('connect', () => {
-      console.log(`client connected to ${options.hostname}`);
-    });
+    this.client.on('connect', () =>
+      console.log(`client connected to ${options.hostname}`)
+    );
 
     this.client.on('message', (topic, message, packet) => {
       try {
@@ -33,7 +33,7 @@ export class MqttEdisClient {
           this.messageSubject.next({ topic, timestamp, value });
         }
       } catch (error) {
-        console.log(
+        console.error(
           `Could not parse mqtt message '${message}' with ${JSON.stringify(
             packet
           )}`
@@ -42,21 +42,17 @@ export class MqttEdisClient {
     });
   }
 
-  setAccessToken(accessToken: string) {
-    this.client.options.password = accessToken;
-  }
-
   subscribeTopic(
     stationId: string,
     phenomenon: string
   ): Observable<TimeSeriesData> {
     const topic = `edis/pegelonline/*/*/*/*/${stationId}/${phenomenon}`;
     return new Observable<TimeSeriesData>((subscriber) => {
-      this.client.subscribe(topic, () => {
+      this.client.subscribe(topic, () =>
         console.log(
           `Subscribed to topic ${topic} since ${new Date().toTimeString()}`
-        );
-      });
+        )
+      );
       const msgSubscription = this.messageSubject.subscribe((msg) => {
         const topicFragments = msg.topic.split('/');
         if (topicFragments.length >= 0) {
