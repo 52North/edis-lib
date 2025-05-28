@@ -1,5 +1,5 @@
 {
-  "name": "edis",
+  "name": "@52north/edis-lib",
   "version": "1.0.0",
   "description": "Library for an easy use of Dict-API and Rest-API of pegelonline",
   "main": "build/main/index.js",
