@@ -3,8 +3,7 @@ import { IClientOptions } from 'mqtt';
 export const DEFAULT_PEGELONLINE_URL =
   'https://www.pegelonline.wsv.de/webservices/rest-api/v2';
 
-// TODO: needs adjustment, when deployment done
-export const DEFAULT_DICT_URL = 'http://localhost:3000';
+export const DEFAULT_DICT_URL = 'https://dict-api.pegelonline.wsv.de';
 
 export const WEBSOCKET_BASE_CONFIG: IClientOptions = {
   protocol: 'wss',
