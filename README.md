@@ -6,7 +6,9 @@ Library to consume the DICT-API and the [Pegelonline REST-API](https://www.pegel
 
 To get a packaged build of the edis lib use `pnpm build`.
 
-## [Getting started with the lib](./HowTo.md)
+[Getting started with the lib](./HowTo.md)
+
+**Entwickelt im Auftrag des ITZ Bund**
 
 <!-- ``` typescript
 const edis = new Edis({
