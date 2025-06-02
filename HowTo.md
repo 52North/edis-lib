@@ -3,7 +3,7 @@
 
 Dieses Dokument erklärt, wie Sie mithilfe des EDIS Library Metadaten und (Echtzeit-)Messdaten von Stationen und Zeitreihen abfragen. 
 
-Die Stationsinformationen und Messwerte des letzten Monats werden über die [Pegelonline API](https://www.pegelonline.wsv.de/webservice/guideRestapi) bezogen. Echtzeitmessdaten können über einen MQTT Broker bezogen werden. Die [EDIS-Api](TODO: insert url zur Doku) stellt eine Suchfunktion auf den Stationen bereit. Die hier verwendete EDIS Library verbindet all diese Endpunkte durch eine einfach zu verwendende npm Library.
+Die Stationsinformationen und Messwerte des letzten Monats werden über die [Pegelonline API](https://www.pegelonline.wsv.de/webservice/guideRestapi) bezogen. Echtzeitmessdaten können über einen MQTT Broker bezogen werden. Die [EDIS-Api](https://dict-api.pegelonline.wsv.de) stellt eine Suchfunktion auf den Stationen bereit. Die hier verwendete EDIS Library verbindet all diese Endpunkte durch eine einfach zu verwendende npm Library.
 
 ## 1. Voraussetzungen
 
@@ -11,14 +11,14 @@ Die Stationsinformationen und Messwerte des letzten Monats werden über die [Peg
 
 ## 2. Installation
 
-- installieren der EDIS Library durch `npm install edis`.
+- installieren der EDIS Library durch `npm install @52north/edis-lib`.
 
 ## **3. Schritte im Code**
 
 ### **3.1. Importieren der Module**
 
 ```javascript
-import { Edis, EdisProperties, Station, TimeSeries } from 'edis';
+import { Edis, EdisProperties, Station, TimeSeries } from '@52north/edis-lib';
 ```
 
 - **`Edis`**: Hauptklasse, um mit den APIs zu kommunizieren.
@@ -31,7 +31,7 @@ import { Edis, EdisProperties, Station, TimeSeries } from 'edis';
 const options: EdisProperties = {
   usedInBrowser: true,
   pegelonlineUrl: 'https://www.pegelonline.wsv.de/webservices/rest-api/v2',
-  dictApiUrl: 'http://localhost:3000',
+  dictApiUrl: 'https://dict-api.pegelonline.wsv.de',
   mqttHost: 'edis.pegelonline.wsv.de',
   mqttCredentials: {
     username: 'username',
@@ -45,7 +45,7 @@ Alle Parameter sind optional
 
 - **`usedInBrowser`**: Hier kann konfiguriert werden, ob die Lib im Browser oder in der NodeJs-Umgebung genutzt wird. Bei der Browser-Nutzung werden die Echtzeitwerte per Websocket bezogen und in der NodeJS-Umgebung direkt über MQTT. Standwartmäßig ist der Wert auf `true`
 - **`pegelonlineUrl`**: Hier kann die URL zur Pegelonline-Instanz geändert werden. Der Standartwert ist `https://www.pegelonline.wsv.de/webservices/rest-api/v2`
-- **`dictApiUrl`**: Hier kann die URL zur DICT-API geändert werden. Der Standartwert ist `TODO: muss noch rein, wenn deployt...`
+- **`dictApiUrl`**: Hier kann die URL zur DICT-API geändert werden. Der Standartwert ist `https://dict-api.pegelonline.wsv.de`
 - **`mqttHost`**: Host für die Echtzeitdaten. Der Standartwert ist `edis.pegelonline.wsv.de`
 - **`mqttCredentials`**: Basic-Auth Credentials für die Verbindung zum MQTT-Broker. Standardmäßig nicht gesetzt.
 

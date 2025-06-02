@@ -5,6 +5,7 @@
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
+  "repository": "https://github.com/52North/edis-lib",
   "scripts": {
     "build": "run-p build:* && pnpm pack",
     "build:main": "tsc -p tsconfig.json",
