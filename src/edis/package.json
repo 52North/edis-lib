@@ -12,7 +12,7 @@
     "build:module": "tsc -p tsconfig.module.json"
   },
   "dependencies": {
-    "axios": "^0.27.2",
+    "axios": "^1.9.0",
     "mqtt": "^5.5.1",
     "rxjs": "^7.5.6"
   },
